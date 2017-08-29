@@ -32,7 +32,7 @@ def get_random_image():
     }
 
 
-def generate_pdf():
+def generate_pdf(image_width=2.25 * inch):
     image = get_random_image()
     logger.debug("Generating pdf")
     result = StringIO()
@@ -42,11 +42,10 @@ def generate_pdf():
     image["image_io"].seek(0)
     img = utils.ImageReader(image["image_io"])
     iw, ih = img.getSize()
-    width = 2 * inch
     aspect = ih / float(iw)
     pdf_canvas.drawInlineImage(
-        pil_image, 0.5 * inch, 0.5 * inch,
-        width=width, height=(width * aspect))
+        pil_image, 0.25 * inch, 0.25 * inch,
+        width=image_width, height=(image_width * aspect))
     pdf_canvas.showPage()
     pdf_canvas.save()
     result.seek(0)
@@ -79,7 +78,7 @@ def generate_postcard(front_pdf, back_pdf):
 
 
 def make_postcard():
-    front_pdf = generate_pdf()
+    front_pdf = generate_pdf(image_width=5 * inch)
     back_pdf = generate_pdf()
     postcard = generate_postcard(front_pdf, back_pdf)
     print postcard
